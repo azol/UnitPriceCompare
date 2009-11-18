@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:padding="1mm"
+    android:stretchColumns="0">
+
+    <TableRow>
+        <TextView android:id="@+id/price"
+            android:text="23.4"
+            android:textSize="25sp" />
+        <TextView android:id="@+id/rank"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:gravity="right"/>
+    </TableRow>
+
+    <TableRow>
+        <TextView android:id="@+id/quantity"
+            android:singleLine="true"
+            android:fadingEdge="horizontal"
+            android:text="250 * 12 ml" />
+        <TextView android:id="@+id/ratio"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:gravity="right"/>
+    </TableRow>
+    
+</TableLayout>

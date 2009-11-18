@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ItemDialog" 
+    android:orientation="vertical"
+    android:padding="3px"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent">
+
+    <EditText android:id="@+id/ItemDialog_PriceField" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/item_price_hint" android:inputType="numberDecimal"/>
+
+    <EditText android:id="@+id/ItemDialog_QuantityField" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/item_quantity_hint" android:inputType="text|numberDecimal"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_weight="1" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content">    
+
+    <RadioGroup android:id="@+id/ItemDialog_Unit_weight"
+        android:orientation="vertical"
+        android:layout_weight="1" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content">
+        
+        <RadioButton android:id="@+id/ItemDialog_Unit_g" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1" 
+            android:text="g" />        
+        <RadioButton android:id="@+id/ItemDialog_Unit_kg" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:text="kg" />        
+        <RadioButton android:id="@+id/ItemDialog_Unit_oz" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:text="oz" />        
+        <RadioButton android:id="@+id/ItemDialog_Unit_lb" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:text="lb" />        
+    </RadioGroup>
+
+    <RadioGroup android:id="@+id/ItemDialog_Unit_volume" 
+        android:orientation="vertical"
+        android:layout_weight="1" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content">
+        
+        <RadioButton android:id="@+id/ItemDialog_Unit_ml" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1" 
+            android:text="ml" />        
+        <RadioButton android:id="@+id/ItemDialog_Unit_cl" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:text="cl" />        
+        <RadioButton android:id="@+id/ItemDialog_Unit_l" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:text="L" />        
+        <RadioButton android:id="@+id/ItemDialog_Unit_floz" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:text="fl.oz" />        
+        <RadioButton android:id="@+id/ItemDialog_Unit_gal" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:text="gal" />        
+    
+    </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content">    
+
+        <Button android:id="@+id/ItemDialog_ok" 
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" 
+            android:layout_weight="1" 
+            android:text="@android:string/ok" />
+
+        <Button android:id="@+id/ItemDialog_cancel" 
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" 
+            android:layout_weight="1" 
+            android:text="@android:string/cancel" />
+
+    </LinearLayout>
+</LinearLayout>

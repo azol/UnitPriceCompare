@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Unit Price Compare</string>
+    <string name="add_item">Add</string>
+    <string name="about">About</string>
+    <string name="clear_all_items">Clear All</string>
+    <string name="uncomparable">Uncomparable</string>
+    <string name="edit_item">Edit</string>
+    <string name="delete_item">Delete</string>
+    <string name="shopping_item">Shopping Item</string>
+    <string name="item_price_hint">Price, e.g. 19.9</string>
+    <string name="item_quantity_hint">Quantity, e.g. 150*3+100</string>
+    <string name="invalid_input">Invalid input, please check</string>
+</resources>
