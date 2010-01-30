@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">比价易</string>
+    <string name="add_item">添加</string>
+    <string name="help">使用说明</string>
+    <string name="clear_all_items">清空</string>
+    <string name="uncomparable">无法比较</string>
+    <string name="edit_item">修改</string>
+    <string name="delete_item">删除</string>
+    <string name="shopping_item">Shopping Item</string>
+    <string name="item_price_hint">价格, 如 19.9</string>
+    <string name="item_quantity_hint">数量, 如 150*3+100</string>
+    <string name="invalid_input">输入有误, 请检查</string>
+    <string name="price">价格:</string>
+    <string name="quantity">数量:</string>
+    <string name="unit">单位:</string>
+</resources>

@@ -1,8 +1,10 @@
 package leoliang.unitpricecompare;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import leoliang.android.lib.crashreport.CrashMonitor;
 import leoliang.unitpricecompare.model.PriceRanker;
 import leoliang.unitpricecompare.model.ShoppingItem;
 import leoliang.unitpricecompare.model.PriceRanker.UncomparableUnitException;
@@ -11,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +30,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
+import com.flurry.android.FlurryAgent;
+
 public class MainActivity extends Activity {
 
     private static final String LOG_TAG = "UnitPriceCompare";
@@ -35,6 +40,22 @@ public class MainActivity extends Activity {
     private static final int ACTION_EDIT = 45342;
 
     private ItemList itemList;
+
+    @Override
+    public void onStart() {
+        Log.v(LOG_TAG, "onStart");
+        super.onStart();
+        CrashMonitor.monitor(this);
+        FlurryAgent.setCaptureUncaughtExceptions(false);
+        FlurryAgent.onStartSession(this, "5Q82B7WVG6DAIHNFF649");
+    }
+
+    @Override
+    public void onStop() {
+        Log.v(LOG_TAG, "onStop");
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
 
     /** Called when the activity is first created. */
     @Override
@@ -112,8 +133,9 @@ public class MainActivity extends Activity {
         case R.id.ClearAllItems:
             itemList.clear();
             return true;
-        case R.id.about:
-            // TODO
+        case R.id.help:
+            Intent intent = new Intent(getApplicationContext(), HelpActivity.class);
+            startActivity(intent);
             return true;
         }
         return false;
@@ -125,9 +147,12 @@ public class MainActivity extends Activity {
         private final LayoutInflater inflater;
         private List<ShoppingItem> items = new ArrayList<ShoppingItem>();
         private PriceRanker ranker = new PriceRanker();
+        private NumberFormat numberFormat;
 
         public ItemList(Context context) {
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            numberFormat = NumberFormat.getPercentInstance();
+            numberFormat.setMaximumFractionDigits(0);
         }
 
         public void setItem(int index, ShoppingItem item) {
@@ -164,18 +189,19 @@ public class MainActivity extends Activity {
             TextView quantityView = (TextView) view.findViewById(R.id.quantity);
             TextView ratioView = (TextView) view.findViewById(R.id.ratio);
 
-            priceView.setText(String.valueOf(item.getPrice()));
+            NumberFormat format = NumberFormat.getCurrencyInstance();
+            priceView.setText(format.format(item.getPrice()));
             quantityView.setText(item.getQuantity().toString());
             try {
                 int rank = ranker.getRank(item);
                 if ((rank > 0) && (rank <= rankName.length)) {
                     rankView.setText(rankName[rank - 1]);
                     if (rank <= 3) {
-                        rankView.setTextColor(Color.GREEN);
+                        rankView.setTextColor(Color.rgb(0, 153, 0)); // dark green
                     }
                 }
                 if (rank > 1) {
-                    ratioView.setText("+" + String.valueOf((ranker.getRatioToBestPrice(item) - 1) * 100) + "%");
+                    ratioView.setText("+" + numberFormat.format(ranker.getRatioToBestPrice(item) - 1));
                 }
             } catch (UncomparableUnitException e) {
                 rankView.setText(R.string.uncomparable);

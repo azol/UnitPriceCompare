@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Unit Price Compare</string>
     <string name="add_item">Add</string>
-    <string name="about">About</string>
+    <string name="help">Help</string>
     <string name="clear_all_items">Clear All</string>
     <string name="uncomparable">Uncomparable</string>
     <string name="edit_item">Edit</string>
@@ -11,4 +11,7 @@
     <string name="item_price_hint">Price, e.g. 19.9</string>
     <string name="item_quantity_hint">Quantity, e.g. 150*3+100</string>
     <string name="invalid_input">Invalid input, please check</string>
+    <string name="price">Price:</string>
+    <string name="quantity">Quantity:</string>
+    <string name="unit">Unit:</string>
 </resources>

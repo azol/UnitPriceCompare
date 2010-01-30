@@ -27,6 +27,11 @@
 
     </LinearLayout>
     
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unit" />
+    
     <RadioGroup android:id="@+id/ItemDialog_Unit_weight"
         android:orientation="horizontal"
         android:layout_width="fill_parent" 

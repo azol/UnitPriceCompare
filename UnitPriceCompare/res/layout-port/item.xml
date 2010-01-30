@@ -6,16 +6,31 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent">
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/price" />
+
     <EditText android:id="@+id/ItemDialog_PriceField" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/item_price_hint" android:inputType="numberDecimal"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quantity" />
 
     <EditText android:id="@+id/ItemDialog_QuantityField" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/item_quantity_hint" android:inputType="text|numberDecimal"/>
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unit" />
+            
     <LinearLayout
         android:orientation="horizontal"
         android:layout_weight="1" 

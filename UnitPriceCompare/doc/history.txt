@@ -1,0 +1,15 @@
+0.5 (3) 2010-1-30
+  - Display currency symbol by locale
+  - Add help
+  - Change to light theme
+  
+0.4 (2) 2009-12-10
+  - Add CrashReporter
+  - Fix bug: incorrect price when edit item
+  - Add Flurry Analytics
+
+0.3  2009-12-5
+  - Minor update
+
+0.2  2009-11-17
+  - First runnable version

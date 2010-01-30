@@ -1,5 +1,6 @@
 package leoliang.unitpricecompare;
 
+import leoliang.android.lib.crashreport.CrashMonitor;
 import leoliang.unitpricecompare.model.Quantity;
 import leoliang.unitpricecompare.model.ShoppingItem;
 import android.app.Activity;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
+import com.flurry.android.FlurryAgent;
+
 /**
  * UI for input shopping item information.
  */
@@ -25,6 +28,22 @@ public class ShoppingItemActivity extends Activity {
     private static final String LOG_TAG = "UnitPriceCompare";
 
     private ShoppingItem shoppingItem;
+
+    @Override
+    public void onStart() {
+        Log.v(LOG_TAG, "onStart");
+        super.onStart();
+        CrashMonitor.monitor(this);
+        FlurryAgent.setCaptureUncaughtExceptions(false);
+        FlurryAgent.onStartSession(this, "5Q82B7WVG6DAIHNFF649");
+    }
+
+    @Override
+    public void onStop() {
+        Log.v(LOG_TAG, "onStop");
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
 
     /** Called when the activity is first created. */
     @Override
@@ -61,10 +80,10 @@ public class ShoppingItemActivity extends Activity {
         okButton.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 if (updateShoppingItem()) {
-                Intent intent = getIntent();
-                intent.putExtra(EXTRA_SHOPPING_ITEM, shoppingItem);
-                ShoppingItemActivity.this.setResult(RESULT_OK, intent);
-                ShoppingItemActivity.this.finish();
+                    Intent intent = getIntent();
+                    intent.putExtra(EXTRA_SHOPPING_ITEM, shoppingItem);
+                    ShoppingItemActivity.this.setResult(RESULT_OK, intent);
+                    ShoppingItemActivity.this.finish();
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.invalid_input, Toast.LENGTH_LONG).show();
                 }
@@ -82,7 +101,7 @@ public class ShoppingItemActivity extends Activity {
 
         shoppingItem = (ShoppingItem) getIntent().getSerializableExtra(EXTRA_SHOPPING_ITEM);
         if (shoppingItem != null) {
-            priceField.setText(Double.toString(shoppingItem.getUnitPrice()));
+            priceField.setText(Double.toString(shoppingItem.getPrice()));
             Quantity quantity = shoppingItem.getQuantity();
             quantityField.setText(quantity.getValueExpression());
 
@@ -102,7 +121,6 @@ public class ShoppingItemActivity extends Activity {
 
     protected boolean updateShoppingItem() {
 
-
         TextView priceField = (TextView) findViewById(R.id.ItemDialog_PriceField);
         String price = priceField.getText().toString();
         try {
@@ -113,7 +131,12 @@ public class ShoppingItemActivity extends Activity {
         }
 
         TextView quantityField = (TextView) findViewById(R.id.ItemDialog_QuantityField);
-        shoppingItem.getQuantity().setValue(quantityField.getText().toString());
+        try {
+            shoppingItem.getQuantity().setValue(quantityField.getText().toString());
+        } catch (ArithmeticException e) {
+            quantityField.requestFocus();
+            return false;
+        }
 
         RadioGroup volumeGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_volume);
         int unitButtonId = volumeGroup.getCheckedRadioButtonId();
@@ -121,7 +144,11 @@ public class ShoppingItemActivity extends Activity {
             RadioGroup weightGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_weight);
             unitButtonId = weightGroup.getCheckedRadioButtonId();
         }
-        shoppingItem.getQuantity().setUnit(getUnitFromButtonId(unitButtonId));
+        String unit = getUnitFromButtonId(unitButtonId);
+        if (unit == null) {
+            return false;
+        }
+        shoppingItem.getQuantity().setUnit(unit);
 
         return true;
     }
