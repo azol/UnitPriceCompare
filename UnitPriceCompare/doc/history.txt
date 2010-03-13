@@ -1,3 +1,6 @@
+0.5.1 (4) 2010-3-13
+  - Add log for tracing bug in SimpleMathEvaluator 
+
 0.5 (3) 2010-1-30
   - Display currency symbol by locale
   - Add help

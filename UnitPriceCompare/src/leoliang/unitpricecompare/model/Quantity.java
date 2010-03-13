@@ -3,8 +3,11 @@ package leoliang.unitpricecompare.model;
 import java.io.Serializable;
 
 import leoliang.unitpricecompare.util.SimpleMathEvaluator;
+import android.util.Log;
 
 public class Quantity implements Serializable {
+
+    private static final String LOG_TAG = "UnitPriceCompare";
 
     public enum UnitType {
         WEIGHT, VOLUME
@@ -24,6 +27,7 @@ public class Quantity implements Serializable {
     }
 
     public void setValue(String valueExpression) throws ArithmeticException {
+        Log.d(LOG_TAG, "Set quantity value to:" + valueExpression);
         expression = valueExpression;
         value = SimpleMathEvaluator.eval(valueExpression);
     }
