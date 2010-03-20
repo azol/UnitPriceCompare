@@ -14,4 +14,5 @@
     <string name="price">价格:</string>
     <string name="quantity">数量:</string>
     <string name="unit">单位:</string>
+    <string name="each_unit">件</string>
 </resources>

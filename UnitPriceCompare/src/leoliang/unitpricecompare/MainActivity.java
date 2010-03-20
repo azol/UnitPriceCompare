@@ -8,9 +8,14 @@ import leoliang.android.lib.crashreport.CrashMonitor;
 import leoliang.unitpricecompare.model.PriceRanker;
 import leoliang.unitpricecompare.model.ShoppingItem;
 import leoliang.unitpricecompare.model.PriceRanker.UncomparableUnitException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +39,7 @@ import com.flurry.android.FlurryAgent;
 
 public class MainActivity extends Activity {
 
+    private static final String PREF_SHOPPING_ITEMS = "shoppingItems";
     private static final String LOG_TAG = "UnitPriceCompare";
 
     private static final int ACTION_CREATE = 45341;
@@ -64,6 +70,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         itemList = new ItemList(this);
+        loadShoppingItems(itemList);
 
         ListView listView = (ListView) findViewById(R.id.ShoppingItemList);
         listView.setAdapter(itemList);
@@ -82,6 +89,23 @@ public class MainActivity extends Activity {
             }
 
         });
+    }
+
+    private void loadShoppingItems(ItemList itemList) {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        String json = preferences.getString(PREF_SHOPPING_ITEMS, null);
+        if (json == null) {
+            return;
+        }
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                ShoppingItem shoppingItem = new ShoppingItem(jsonArray.getJSONObject(i));
+                itemList.addItem(shoppingItem);
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Unable to deserialize shopping items", e);
+        }
     }
 
     @Override
@@ -139,6 +163,25 @@ public class MainActivity extends Activity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveShoppingItems();
+    }
+
+    private void saveShoppingItems() {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        JSONArray items = new JSONArray();
+        for (int index = 0; index < itemList.getCount(); index++) {
+            try {
+                items.put(((ShoppingItem) itemList.getItem(index)).toJson());
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "Unable to serialize a ShoppingItem to JSON", e);
+            }
+        }
+        preferences.edit().putString(PREF_SHOPPING_ITEMS, items.toString()).commit();
     }
 
     public class ItemList extends BaseAdapter {

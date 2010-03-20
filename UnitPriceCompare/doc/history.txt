@@ -1,3 +1,12 @@
+0.7 (6) 2010-3-20
+  - Group units into block on UI
+  - Fix the bug of switching unit type between weight and volume will lost selection
+  
+0.6 (5) 2010-3-17
+  - Add "each" unit type
+  - Change price field input keypad type
+  - Restore shopping items on restart the application
+
 0.5.1 (4) 2010-3-13
   - Add log for tracing bug in SimpleMathEvaluator 
 

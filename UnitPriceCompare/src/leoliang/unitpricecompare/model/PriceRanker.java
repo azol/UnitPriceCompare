@@ -30,19 +30,26 @@ public class PriceRanker {
     }
 
     private UnitType getMajorityUnitType(Collection<ShoppingItem> items) {
+        int none = 0;
         int volume = 0;
         int weight = 0;
         for (ShoppingItem item : items) {
-            if (item.getQuantity().getUnitType().equals(UnitType.VOLUME)) {
+            UnitType unit = item.getQuantity().getUnitType();
+            if (unit.equals(UnitType.VOLUME)) {
                 volume++;
-            } else {
+            } else if (unit.equals(UnitType.WEIGHT)) {
                 weight++;
+            } else {
+                none++;
             }
         }
-        if (volume > weight) {
+        if ((volume >= weight) && (volume > none)) {
             return UnitType.VOLUME;
         }
-        return UnitType.WEIGHT;
+        if ((weight > volume) && (weight > none)) {
+            return UnitType.WEIGHT;
+        }
+        return UnitType.NONE;
     }
 
     /**

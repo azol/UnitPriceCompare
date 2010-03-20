@@ -3,6 +3,10 @@ package leoliang.unitpricecompare.model;
 import java.io.Serializable;
 
 import leoliang.unitpricecompare.util.SimpleMathEvaluator;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.util.Log;
 
 public class Quantity implements Serializable {
@@ -10,7 +14,7 @@ public class Quantity implements Serializable {
     private static final String LOG_TAG = "UnitPriceCompare";
 
     public enum UnitType {
-        WEIGHT, VOLUME
+        WEIGHT, VOLUME, NONE
     }
 
     private String expression;
@@ -24,6 +28,11 @@ public class Quantity implements Serializable {
     public Quantity(String valueExpression, String unit) throws ArithmeticException {
         setValue(valueExpression);
         setUnit(unit);
+    }
+
+    public Quantity(JSONObject jsonObject) throws ArithmeticException, JSONException {
+        setValue(jsonObject.getString("expression"));
+        setUnit(jsonObject.getString("unit"));
     }
 
     public void setValue(String valueExpression) throws ArithmeticException {
@@ -58,6 +67,9 @@ public class Quantity implements Serializable {
     }
 
     public UnitType getUnitType() {
+        if (unit.equals("")) {
+            return UnitType.NONE;
+        }
         if (unit.equals("g") || unit.equals("kg") || unit.equals("lb") || unit.equals("oz")) {
             return UnitType.WEIGHT;
         }
@@ -67,6 +79,10 @@ public class Quantity implements Serializable {
     @Override
     public String toString() {
         return expression + " " + unit;
+    }
+
+    public JSONObject toJson() throws JSONException {
+        return new JSONObject().put("expression", expression).put("unit", unit);
     }
 
     public boolean isValid() {

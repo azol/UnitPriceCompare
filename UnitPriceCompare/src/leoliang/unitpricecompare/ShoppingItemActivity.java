@@ -28,6 +28,7 @@ public class ShoppingItemActivity extends Activity {
     private static final String LOG_TAG = "UnitPriceCompare";
 
     private ShoppingItem shoppingItem;
+    private boolean switchingUnit = false;
 
     @Override
     public void onStart() {
@@ -56,23 +57,36 @@ public class ShoppingItemActivity extends Activity {
 
         final TextView priceField = (TextView) findViewById(R.id.ItemDialog_PriceField);
         final TextView quantityField = (TextView) findViewById(R.id.ItemDialog_QuantityField);
+        final RadioGroup noUnitGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_notAvailable);
         final RadioGroup volumeGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_volume);
         final RadioGroup weightGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_weight);
 
         OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
+
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == -1) {
+                // switchingUnit: Workaround for Android issue 4785, http://code.google.com/p/android/issues/detail?id=4785
+                if ((checkedId == -1) || switchingUnit) {
                     return;
                 }
+
+                switchingUnit = true;
                 if (group == volumeGroup) {
                     weightGroup.clearCheck();
+                    noUnitGroup.clearCheck();
+                } else if (group == weightGroup) {
+                    volumeGroup.clearCheck();
+                    noUnitGroup.clearCheck();
                 } else {
+                    weightGroup.clearCheck();
                     volumeGroup.clearCheck();
                 }
+                switchingUnit = false;
+
                 priceField.clearFocus();
                 quantityField.clearFocus();
             }
         };
+        noUnitGroup.setOnCheckedChangeListener(onCheckedChangeListener);
         volumeGroup.setOnCheckedChangeListener(onCheckedChangeListener);
         weightGroup.setOnCheckedChangeListener(onCheckedChangeListener);
 
@@ -144,6 +158,10 @@ public class ShoppingItemActivity extends Activity {
             RadioGroup weightGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_weight);
             unitButtonId = weightGroup.getCheckedRadioButtonId();
         }
+        if (unitButtonId == -1) {
+            RadioGroup noUnitGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_notAvailable);
+            unitButtonId = noUnitGroup.getCheckedRadioButtonId();
+        }
         String unit = getUnitFromButtonId(unitButtonId);
         if (unit == null) {
             return false;
@@ -181,6 +199,9 @@ public class ShoppingItemActivity extends Activity {
         if (unitName.equals("gal")) {
             return R.id.ItemDialog_Unit_gal;
         }
+        if (unitName.equals("")) {
+            return R.id.ItemDialog_Unit_none;
+        }
         return -1;
     }
 
@@ -204,6 +225,8 @@ public class ShoppingItemActivity extends Activity {
             return "fl.oz";
         case R.id.ItemDialog_Unit_gal:
             return "gal";
+        case R.id.ItemDialog_Unit_none:
+            return "";
         default:
             Log.w(LOG_TAG, "getUnitFromButtonId() unknown button ID: " + id);
             return null;

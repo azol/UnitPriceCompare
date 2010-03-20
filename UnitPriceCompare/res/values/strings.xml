@@ -14,4 +14,5 @@
     <string name="price">Price:</string>
     <string name="quantity">Quantity:</string>
     <string name="unit">Unit:</string>
+    <string name="each_unit">each</string>
 </resources>
