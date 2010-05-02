@@ -1,6 +1,10 @@
 package leoliang.unitpricecompare;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import leoliang.android.lib.crashreport.CrashMonitor;
+import leoliang.android.widget.util.CompoundRadioGroup;
 import leoliang.unitpricecompare.model.Quantity;
 import leoliang.unitpricecompare.model.ShoppingItem;
 import android.app.Activity;
@@ -28,7 +32,8 @@ public class ShoppingItemActivity extends Activity {
     private static final String LOG_TAG = "UnitPriceCompare";
 
     private ShoppingItem shoppingItem;
-    private boolean switchingUnit = false;
+    private CompoundRadioGroup radioGroups = new CompoundRadioGroup();
+    private Map<Integer, String> buttons;
 
     @Override
     public void onStart() {
@@ -51,6 +56,8 @@ public class ShoppingItemActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        initializeUnitButtonMap();
+
         // init UI components
 
         setContentView(R.layout.item);
@@ -60,35 +67,20 @@ public class ShoppingItemActivity extends Activity {
         final RadioGroup noUnitGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_notAvailable);
         final RadioGroup volumeGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_volume);
         final RadioGroup weightGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_weight);
+        final RadioGroup lengthGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_length);
+
+        radioGroups.add(weightGroup);
+        radioGroups.add(volumeGroup);
+        radioGroups.add(noUnitGroup);
+        radioGroups.add(lengthGroup);
 
         OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
-
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                // switchingUnit: Workaround for Android issue 4785, http://code.google.com/p/android/issues/detail?id=4785
-                if ((checkedId == -1) || switchingUnit) {
-                    return;
-                }
-
-                switchingUnit = true;
-                if (group == volumeGroup) {
-                    weightGroup.clearCheck();
-                    noUnitGroup.clearCheck();
-                } else if (group == weightGroup) {
-                    volumeGroup.clearCheck();
-                    noUnitGroup.clearCheck();
-                } else {
-                    weightGroup.clearCheck();
-                    volumeGroup.clearCheck();
-                }
-                switchingUnit = false;
-
                 priceField.clearFocus();
                 quantityField.clearFocus();
             }
         };
-        noUnitGroup.setOnCheckedChangeListener(onCheckedChangeListener);
-        volumeGroup.setOnCheckedChangeListener(onCheckedChangeListener);
-        weightGroup.setOnCheckedChangeListener(onCheckedChangeListener);
+        radioGroups.setOnCheckedChangeListener(onCheckedChangeListener);
 
         Button okButton = (Button) findViewById(R.id.ItemDialog_ok);
         okButton.setOnClickListener(new OnClickListener() {
@@ -120,19 +112,15 @@ public class ShoppingItemActivity extends Activity {
             quantityField.setText(quantity.getValueExpression());
 
             int unitButtonId = getUnitButtonId(quantity.getUnitName());
-            switch (quantity.getUnitType()) {
-            case VOLUME:
-                volumeGroup.check(unitButtonId);
-                break;
-            case WEIGHT:
-                weightGroup.check(unitButtonId);
-                break;
-            }
+            radioGroups.check(unitButtonId);
         } else {
             shoppingItem = new ShoppingItem();
         }
     }
 
+    /**
+     * @return false if input is invalid
+     */
     protected boolean updateShoppingItem() {
 
         TextView priceField = (TextView) findViewById(R.id.ItemDialog_PriceField);
@@ -152,18 +140,10 @@ public class ShoppingItemActivity extends Activity {
             return false;
         }
 
-        RadioGroup volumeGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_volume);
-        int unitButtonId = volumeGroup.getCheckedRadioButtonId();
-        if (unitButtonId == -1) {
-            RadioGroup weightGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_weight);
-            unitButtonId = weightGroup.getCheckedRadioButtonId();
-        }
-        if (unitButtonId == -1) {
-            RadioGroup noUnitGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_notAvailable);
-            unitButtonId = noUnitGroup.getCheckedRadioButtonId();
-        }
-        String unit = getUnitFromButtonId(unitButtonId);
+        int checkedRadioButtonId = radioGroups.getCheckedRadioButtonId();
+        String unit = getUnitFromButtonId(checkedRadioButtonId);
         if (unit == null) {
+            Log.w(LOG_TAG, "updateShoppingItem(): Unknown button ID: " + checkedRadioButtonId);
             return false;
         }
         shoppingItem.getQuantity().setUnit(unit);
@@ -172,65 +152,39 @@ public class ShoppingItemActivity extends Activity {
     }
 
     private int getUnitButtonId(String unitName) {
-        if (unitName.equals("g")) {
-            return R.id.ItemDialog_Unit_g;
+        for (int id : buttons.keySet()) {
+            if (buttons.get(id).equals(unitName)) {
+                return id;
+            }
         }
-        if (unitName.equals("kg")) {
-            return R.id.ItemDialog_Unit_kg;
-        }
-        if (unitName.equals("oz")) {
-            return R.id.ItemDialog_Unit_oz;
-        }
-        if (unitName.equals("lb")) {
-            return R.id.ItemDialog_Unit_lb;
-        }
-        if (unitName.equals("ml")) {
-            return R.id.ItemDialog_Unit_ml;
-        }
-        if (unitName.equals("cl")) {
-            return R.id.ItemDialog_Unit_cl;
-        }
-        if (unitName.equals("L")) {
-            return R.id.ItemDialog_Unit_l;
-        }
-        if (unitName.equals("fl.oz")) {
-            return R.id.ItemDialog_Unit_floz;
-        }
-        if (unitName.equals("gal")) {
-            return R.id.ItemDialog_Unit_gal;
-        }
-        if (unitName.equals("")) {
-            return R.id.ItemDialog_Unit_none;
-        }
+        Log.w(LOG_TAG, "getUnitButtonId(): Unknow unit: " + unitName);
         return -1;
     }
 
     private String getUnitFromButtonId(int id) {
-        switch (id) {
-        case R.id.ItemDialog_Unit_g:
-            return "g";
-        case R.id.ItemDialog_Unit_kg:
-            return "kg";
-        case R.id.ItemDialog_Unit_oz:
-            return "oz";
-        case R.id.ItemDialog_Unit_lb:
-            return "lb";
-        case R.id.ItemDialog_Unit_ml:
-            return "ml";
-        case R.id.ItemDialog_Unit_cl:
-            return "cl";
-        case R.id.ItemDialog_Unit_l:
-            return "L";
-        case R.id.ItemDialog_Unit_floz:
-            return "fl.oz";
-        case R.id.ItemDialog_Unit_gal:
-            return "gal";
-        case R.id.ItemDialog_Unit_none:
-            return "";
-        default:
-            Log.w(LOG_TAG, "getUnitFromButtonId() unknown button ID: " + id);
-            return null;
-        }
+        return buttons.get(id);
     }
 
+    private void initializeUnitButtonMap() {
+        buttons = new HashMap<Integer, String>();
+
+        buttons.put(R.id.ItemDialog_Unit_mm, "mm");
+        buttons.put(R.id.ItemDialog_Unit_cm, "cm");
+        buttons.put(R.id.ItemDialog_Unit_m, "m");
+        buttons.put(R.id.ItemDialog_Unit_inch, "inch");
+        buttons.put(R.id.ItemDialog_Unit_ft, "ft");
+
+        buttons.put(R.id.ItemDialog_Unit_g, "g");
+        buttons.put(R.id.ItemDialog_Unit_kg, "kg");
+        buttons.put(R.id.ItemDialog_Unit_oz, "oz");
+        buttons.put(R.id.ItemDialog_Unit_lb, "lb");
+
+        buttons.put(R.id.ItemDialog_Unit_ml, "ml");
+        buttons.put(R.id.ItemDialog_Unit_cl, "cl");
+        buttons.put(R.id.ItemDialog_Unit_l, "L");
+        buttons.put(R.id.ItemDialog_Unit_floz, "fl.oz");
+        buttons.put(R.id.ItemDialog_Unit_gal, "gal");
+
+        buttons.put(R.id.ItemDialog_Unit_none, "");
+    }
 }

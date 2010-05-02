@@ -1,5 +1,6 @@
 package leoliang.unitpricecompare.util;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -76,7 +77,7 @@ public class SimpleMathEvaluator {
     private Vector<String> transformPrefix(Vector<String> v_expression) {
         Vector<String> v_prefix = new Vector<String>();
         Stack<String> s_tmp = new Stack<String>();
-        String regex_float = "\\d+(\\.\\d+)?"; //匹配正浮点数
+        String regex_float = "\\d+(\\.\\d*)?"; //匹配正浮点数
         Pattern p_float = Pattern.compile(regex_float);
         Matcher m = null;
         boolean b;
@@ -159,8 +160,12 @@ public class SimpleMathEvaluator {
             if (!str_tmp.equals("+") && !str_tmp.equals("-") && !str_tmp.equals("*") && !str_tmp.equals("/")) {
                 interAns = s_compute.push(Double.parseDouble(str_tmp));
             } else {
-                num2 = (s_compute.pop());
-                num1 = (s_compute.pop());
+                try {
+                    num2 = (s_compute.pop());
+                    num1 = (s_compute.pop());
+                } catch (EmptyStackException e) {
+                    throw new ArithmeticException("EmptyStackException. Missing value.");
+                }
 
                 if (str_tmp.equals("+")) {
                     interAns = num1 + num2;

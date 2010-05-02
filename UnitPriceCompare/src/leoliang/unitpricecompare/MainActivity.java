@@ -29,11 +29,13 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.flurry.android.FlurryAgent;
 
@@ -80,12 +82,19 @@ public class MainActivity extends Activity {
                 inflater.inflate(R.menu.item_context_menu, contextmenu);
             }
         });
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startEditItemActivity(position);
+            }
+        });
 
         Button addButton = (Button) findViewById(R.id.AddItemButton);
         addButton.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ShoppingItemActivity.class);
                 startActivityForResult(intent, ACTION_CREATE);
+                // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
             }
 
         });
@@ -113,11 +122,7 @@ public class MainActivity extends Activity {
         int itemIndex = (int) ((AdapterContextMenuInfo) item.getMenuInfo()).id;
         switch (item.getItemId()) {
         case R.id.EditItem:
-            ShoppingItem shoppingItem = (ShoppingItem) itemList.getItem(itemIndex);
-            Intent intent = new Intent(getApplicationContext(), ShoppingItemActivity.class);
-            intent.putExtra(ShoppingItemActivity.EXTRA_SHOPPING_ITEM, shoppingItem);
-            intent.putExtra(ShoppingItemActivity.EXTRA_SHOPPING_ITEM_INDEX, itemIndex);
-            startActivityForResult(intent, ACTION_EDIT);
+            startEditItemActivity(itemIndex);
             return true;
         case R.id.DeleteItem:
             itemList.deleteItem(itemIndex);
@@ -125,6 +130,15 @@ public class MainActivity extends Activity {
         default:
             return super.onContextItemSelected(item);
         }
+    }
+
+    private void startEditItemActivity(int itemIndex) {
+        ShoppingItem shoppingItem = (ShoppingItem) itemList.getItem(itemIndex);
+        Intent intent = new Intent(getApplicationContext(), ShoppingItemActivity.class);
+        intent.putExtra(ShoppingItemActivity.EXTRA_SHOPPING_ITEM, shoppingItem);
+        intent.putExtra(ShoppingItemActivity.EXTRA_SHOPPING_ITEM_INDEX, itemIndex);
+        startActivityForResult(intent, ACTION_EDIT);
+        // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
     @Override

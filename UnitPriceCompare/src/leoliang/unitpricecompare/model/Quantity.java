@@ -14,7 +14,7 @@ public class Quantity implements Serializable {
     private static final String LOG_TAG = "UnitPriceCompare";
 
     public enum UnitType {
-        WEIGHT, VOLUME, NONE
+        WEIGHT, VOLUME, NONE, LENGTH
     }
 
     private String expression;
@@ -63,6 +63,18 @@ public class Quantity implements Serializable {
         if (unit.equals("gal")) {
             return value * 3785;
         }
+        if (unit.equals("cm")) {
+            return value * 10;
+        }
+        if (unit.equals("m")) {
+            return value * 1000;
+        }
+        if (unit.equals("inch")) {
+            return value * 25.4;
+        }
+        if (unit.equals("ft")) {
+            return value * 304.8;
+        }
         return value;
     }
 
@@ -72,6 +84,9 @@ public class Quantity implements Serializable {
         }
         if (unit.equals("g") || unit.equals("kg") || unit.equals("lb") || unit.equals("oz")) {
             return UnitType.WEIGHT;
+        }
+        if (unit.equals("mm") || unit.equals("cm") || unit.equals("m") || unit.equals("inch") || unit.equals("ft")) {
+            return UnitType.LENGTH;
         }
         return UnitType.VOLUME;
     }

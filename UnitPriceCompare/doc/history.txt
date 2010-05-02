@@ -1,3 +1,10 @@
+0.8 (7)
+  - Bug fix: force close when there is an operator at the end of the value expression
+  - Bug fix: piece unit isn't set when application restore
+  - Bug fix: Quantity expression ends with dot is evaluated as zero
+  - Add support of length units 
+  - Click on an shopping item will directly go to edit page
+
 0.7 (6) 2010-3-20
   - Group units into block on UI
   - Fix the bug of switching unit type between weight and volume will lost selection

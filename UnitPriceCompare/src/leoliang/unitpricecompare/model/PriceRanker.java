@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import leoliang.unitpricecompare.model.Quantity.UnitType;
+import leoliang.util.ArrayHelper;
 
 public class PriceRanker {
     
@@ -30,26 +31,14 @@ public class PriceRanker {
     }
 
     private UnitType getMajorityUnitType(Collection<ShoppingItem> items) {
-        int none = 0;
-        int volume = 0;
-        int weight = 0;
+        int[] counters = new int[UnitType.values().length];
+
         for (ShoppingItem item : items) {
             UnitType unit = item.getQuantity().getUnitType();
-            if (unit.equals(UnitType.VOLUME)) {
-                volume++;
-            } else if (unit.equals(UnitType.WEIGHT)) {
-                weight++;
-            } else {
-                none++;
-            }
+            counters[unit.ordinal()]++;
         }
-        if ((volume >= weight) && (volume > none)) {
-            return UnitType.VOLUME;
-        }
-        if ((weight > volume) && (weight > none)) {
-            return UnitType.WEIGHT;
-        }
-        return UnitType.NONE;
+
+        return UnitType.values()[ArrayHelper.getIndexOfMax(counters)];
     }
 
     /**
