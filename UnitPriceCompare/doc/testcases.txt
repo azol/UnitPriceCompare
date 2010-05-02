@@ -1,0 +1,17 @@
+1. 
+ClearCall
+Add $10, 1000ml
+Add $11, 1L
+Check: 1st, 2nd(+10%)
+Add $20, 1000mm
+Add $21, 1m
+Add $20, 3ft
+Check: Uncomparable, uncomparable, 1st, 2nd(+5%), 3rd(+9%)
+Disable $21
+Disable $10
+Edit $10, 1000g
+Add $30, 30oz
+Check: $10:1st, $30:2nd(+253%)
+Edit $30, 30lb
+Check: $10:2nd(+354%), $30:1st
+Delete $30

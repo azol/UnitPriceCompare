@@ -9,7 +9,7 @@ import leoliang.unitpricecompare.model.Quantity.UnitType;
 import leoliang.util.ArrayHelper;
 
 public class PriceRanker {
-    
+
     public class UncomparableUnitException extends Exception {
     }
 
@@ -20,7 +20,7 @@ public class PriceRanker {
         priceRank.clear();
         unitType = getMajorityUnitType(items);
         for (ShoppingItem item : items) {
-            if (item.getQuantity().getUnitType().equals(unitType)) {
+            if (item.isEnabled() && item.getQuantity().getUnitType().equals(unitType)) {
                 double unitPrice = item.getUnitPrice();
                 if (!priceRank.contains(unitPrice)) {
                     priceRank.add(unitPrice);
@@ -34,8 +34,10 @@ public class PriceRanker {
         int[] counters = new int[UnitType.values().length];
 
         for (ShoppingItem item : items) {
-            UnitType unit = item.getQuantity().getUnitType();
-            counters[unit.ordinal()]++;
+            if (item.isEnabled()) {
+                UnitType unit = item.getQuantity().getUnitType();
+                counters[unit.ordinal()]++;
+            }
         }
 
         return UnitType.values()[ArrayHelper.getIndexOfMax(counters)];
@@ -47,6 +49,9 @@ public class PriceRanker {
      * @throws UncomparableUnitException
      */
     public int getRank(ShoppingItem item) throws UncomparableUnitException {
+        if (!item.isEnabled()) {
+            return 0;
+        }
         if (!item.getQuantity().getUnitType().equals(unitType)) {
             throw new UncomparableUnitException();
         }

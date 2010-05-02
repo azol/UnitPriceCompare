@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.flurry.android.FlurryAgent;
 
@@ -62,29 +61,9 @@ public class ShoppingItemActivity extends Activity {
 
         setContentView(R.layout.item);
 
-        final TextView priceField = (TextView) findViewById(R.id.ItemDialog_PriceField);
-        final TextView quantityField = (TextView) findViewById(R.id.ItemDialog_QuantityField);
-        final RadioGroup noUnitGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_notAvailable);
-        final RadioGroup volumeGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_volume);
-        final RadioGroup weightGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_weight);
-        final RadioGroup lengthGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_length);
-
-        radioGroups.add(weightGroup);
-        radioGroups.add(volumeGroup);
-        radioGroups.add(noUnitGroup);
-        radioGroups.add(lengthGroup);
-
-        OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                priceField.clearFocus();
-                quantityField.clearFocus();
-            }
-        };
-        radioGroups.setOnCheckedChangeListener(onCheckedChangeListener);
-
-        Button okButton = (Button) findViewById(R.id.ItemDialog_ok);
+        final Button okButton = (Button) findViewById(R.id.ItemDialog_ok);
         okButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View view) {
+            public void onClick(@SuppressWarnings("unused") View view) {
                 if (updateShoppingItem()) {
                     Intent intent = getIntent();
                     intent.putExtra(EXTRA_SHOPPING_ITEM, shoppingItem);
@@ -97,11 +76,23 @@ public class ShoppingItemActivity extends Activity {
         });
         Button cancelButton = (Button) findViewById(R.id.ItemDialog_cancel);
         cancelButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View view) {
+            public void onClick(@SuppressWarnings("unused") View view) {
                 ShoppingItemActivity.this.setResult(RESULT_CANCELED);
                 ShoppingItemActivity.this.finish();
             }
         });
+
+        final TextView priceField = (TextView) findViewById(R.id.ItemDialog_PriceField);
+        final TextView quantityField = (TextView) findViewById(R.id.ItemDialog_QuantityField);
+        final RadioGroup noUnitGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_notAvailable);
+        final RadioGroup volumeGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_volume);
+        final RadioGroup weightGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_weight);
+        final RadioGroup lengthGroup = (RadioGroup) findViewById(R.id.ItemDialog_Unit_length);
+
+        radioGroups.add(weightGroup);
+        radioGroups.add(volumeGroup);
+        radioGroups.add(noUnitGroup);
+        radioGroups.add(lengthGroup);
 
         // init values
 
@@ -147,6 +138,7 @@ public class ShoppingItemActivity extends Activity {
             return false;
         }
         shoppingItem.getQuantity().setUnit(unit);
+        shoppingItem.setEnabled(true);
 
         return true;
     }

@@ -28,9 +28,12 @@ public class ArrayHelper {
      * @return index of the maximum
      */
     public static int getIndexOfMax(int[] array) {
-        int indexOfMax = -1;
+        if (array.length <= 1) {
+            return 1;
+        }
+        int indexOfMax = 0;
         int max = array[0];
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 1; i < array.length; i++) {
             if (array[i] > max) {
                 indexOfMax = i;
                 max = array[i];

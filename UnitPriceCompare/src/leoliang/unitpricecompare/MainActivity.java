@@ -29,13 +29,13 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.flurry.android.FlurryAgent;
 
@@ -46,6 +46,8 @@ public class MainActivity extends Activity {
 
     private static final int ACTION_CREATE = 45341;
     private static final int ACTION_EDIT = 45342;
+
+    private static final int MENU_DELETE = 1;
 
     private ItemList itemList;
 
@@ -76,22 +78,11 @@ public class MainActivity extends Activity {
 
         ListView listView = (ListView) findViewById(R.id.ShoppingItemList);
         listView.setAdapter(itemList);
-        listView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-            public void onCreateContextMenu(ContextMenu contextmenu, View view, ContextMenuInfo contextmenuinfo) {
-                android.view.MenuInflater inflater = getMenuInflater();
-                inflater.inflate(R.menu.item_context_menu, contextmenu);
-            }
-        });
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startEditItemActivity(position);
-            }
-        });
+        registerForContextMenu(listView);
 
         Button addButton = (Button) findViewById(R.id.AddItemButton);
         addButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View view) {
+            public void onClick(@SuppressWarnings("unused") View view) {
                 Intent intent = new Intent(getApplicationContext(), ShoppingItemActivity.class);
                 startActivityForResult(intent, ACTION_CREATE);
                 // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
@@ -119,13 +110,9 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        int itemIndex = (int) ((AdapterContextMenuInfo) item.getMenuInfo()).id;
-        switch (item.getItemId()) {
-        case R.id.EditItem:
-            startEditItemActivity(itemIndex);
-            return true;
-        case R.id.DeleteItem:
-            itemList.deleteItem(itemIndex);
+        switch (item.getOrder()) {
+        case MENU_DELETE:
+            itemList.deleteItem(item.getItemId());
             return true;
         default:
             return super.onContextItemSelected(item);
@@ -237,33 +224,62 @@ public class MainActivity extends Activity {
             return i;
         }
 
-        public View getView(int i, View convertView, ViewGroup viewgroup) {
-            ShoppingItem item = items.get(i);
+        public View getView(final int i, View convertView, ViewGroup viewgroup) {
+            final ShoppingItem item = items.get(i);
             View view = inflater.inflate(R.layout.item_view, null);
 
             TextView priceView = (TextView) view.findViewById(R.id.price);
             TextView rankView = (TextView) view.findViewById(R.id.rank);
             TextView quantityView = (TextView) view.findViewById(R.id.quantity);
             TextView ratioView = (TextView) view.findViewById(R.id.ratio);
+            CheckBox enabledBox = (CheckBox) view.findViewById(R.id.enabled);
 
             NumberFormat format = NumberFormat.getCurrencyInstance();
             priceView.setText(format.format(item.getPrice()));
             quantityView.setText(item.getQuantity().toString());
-            try {
-                int rank = ranker.getRank(item);
-                if ((rank > 0) && (rank <= rankName.length)) {
-                    rankView.setText(rankName[rank - 1]);
-                    if (rank <= 3) {
-                        rankView.setTextColor(Color.rgb(0, 153, 0)); // dark green
+            enabledBox.setChecked(item.isEnabled());
+
+            if (item.isEnabled()) {
+                try {
+                    int rank = ranker.getRank(item);
+                    if ((rank > 0) && (rank <= rankName.length)) {
+                        rankView.setText(rankName[rank - 1]);
+                        if (rank <= 3) {
+                            rankView.setTextColor(Color.rgb(0, 153, 0)); // dark green
+                        }
                     }
+                    if (rank > 1) {
+                        ratioView.setText("+" + numberFormat.format(ranker.getRatioToBestPrice(item) - 1));
+                    }
+                } catch (UncomparableUnitException e) {
+                    rankView.setText(R.string.uncomparable);
+                    rankView.setTextColor(Color.RED);
                 }
-                if (rank > 1) {
-                    ratioView.setText("+" + numberFormat.format(ranker.getRatioToBestPrice(item) - 1));
-                }
-            } catch (UncomparableUnitException e) {
-                rankView.setText(R.string.uncomparable);
-                rankView.setTextColor(Color.RED);
+            } else {
+                priceView.setEnabled(false);
             }
+
+            enabledBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton button, boolean isChecked) {
+                    item.setEnabled(isChecked);
+                    notifyItemUpdated();
+                }
+            });
+
+            view.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View paramView) {
+                    startEditItemActivity(i);
+                }
+            });
+
+            view.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+                    menu.add(Menu.NONE, i, MENU_DELETE, getString(R.string.delete_item));
+                }
+            });
 
             return view;
         }
