@@ -9,10 +9,13 @@
     <string name="delete_item">删除</string>
     <string name="shopping_item">Shopping Item</string>
     <string name="item_price_hint">价格, 如 19.9</string>
-    <string name="item_quantity_hint">数量, 如 150*3+100</string>
-    <string name="invalid_input">输入有误, 请检查</string>
+    <string name="item_quantity_hint">数量, 如 550 或 150*3+100</string>
+    <string name="invalid_input_price">输入的价格有误</string>
+    <string name="invalid_input_quantity">输入的数量有误</string>
+    <string name="invalid_input_unit">选择单位了吗？</string>
     <string name="price">价格:</string>
     <string name="quantity">数量:</string>
     <string name="unit">单位:</string>
     <string name="each_unit">件</string>
+    <string name="add_items_hint">加入至少两件货品，才能进行比较</string>
 </resources>

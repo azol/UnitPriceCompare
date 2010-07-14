@@ -15,4 +15,9 @@
         android:drawableLeft="@android:drawable/ic_menu_add"
         android:text="@string/add_item" />
 
+    <TextView android:id="@+id/AddItemsHintText" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:text="@string/add_items_hint" 
+        android:gravity="center_horizontal"/>
 </LinearLayout>

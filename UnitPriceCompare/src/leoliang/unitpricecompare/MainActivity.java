@@ -185,6 +185,24 @@ public class MainActivity extends Activity {
         preferences.edit().putString(PREF_SHOPPING_ITEMS, items.toString()).commit();
     }
 
+    private void hideHint() {
+        TextView hint = (TextView) findViewById(R.id.AddItemsHintText);
+        hint.setVisibility(View.GONE);
+    }
+
+    private void showHint() {
+        TextView hint = (TextView) findViewById(R.id.AddItemsHintText);
+        hint.setVisibility(View.VISIBLE);
+    }
+    
+    private void updateHint() {
+        if (itemList.getCount() < 2) {
+            showHint();
+        } else {
+            hideHint();
+        }
+    }
+
     public class ItemList extends BaseAdapter {
 
         private final String[] rankName = { "Best Buy", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th" };
@@ -297,6 +315,8 @@ public class MainActivity extends Activity {
         public void notifyItemUpdated() {
             ranker.rank(items);
             notifyDataSetChanged();
+            updateHint();
         }
     }
+
 }

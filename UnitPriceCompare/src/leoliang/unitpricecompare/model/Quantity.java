@@ -38,7 +38,12 @@ public class Quantity implements Serializable {
     public void setValue(String valueExpression) throws ArithmeticException {
         Log.d(LOG_TAG, "Set quantity value to:" + valueExpression);
         expression = valueExpression;
-        value = SimpleMathEvaluator.eval(valueExpression);
+        double evalValue = SimpleMathEvaluator.eval(valueExpression);
+        if (evalValue > 0) {
+            value = evalValue;
+        } else {
+            throw new ArithmeticException("Result of the expression isn't positive.");
+        }
     }
 
     public double getQuantityInBasicUnit() {
@@ -75,6 +80,9 @@ public class Quantity implements Serializable {
         if (unit.equals("ft")) {
             return value * 304.8;
         }
+        if (unit.equals("yd")) {
+            return value * 914.4;
+        }
         return value;
     }
 
@@ -85,7 +93,8 @@ public class Quantity implements Serializable {
         if (unit.equals("g") || unit.equals("kg") || unit.equals("lb") || unit.equals("oz")) {
             return UnitType.WEIGHT;
         }
-        if (unit.equals("mm") || unit.equals("cm") || unit.equals("m") || unit.equals("inch") || unit.equals("ft")) {
+        if (unit.equals("mm") || unit.equals("cm") || unit.equals("m") || unit.equals("inch") || unit.equals("ft")
+                || unit.equals("yd")) {
             return UnitType.LENGTH;
         }
         return UnitType.VOLUME;

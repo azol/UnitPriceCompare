@@ -69,8 +69,6 @@ public class ShoppingItemActivity extends Activity {
                     intent.putExtra(EXTRA_SHOPPING_ITEM, shoppingItem);
                     ShoppingItemActivity.this.setResult(RESULT_OK, intent);
                     ShoppingItemActivity.this.finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.invalid_input, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -120,6 +118,7 @@ public class ShoppingItemActivity extends Activity {
             shoppingItem.setPrice(Double.parseDouble(price));
         } catch (NumberFormatException e) {
             priceField.requestFocus();
+            Toast.makeText(getApplicationContext(), R.string.invalid_input_price, Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -128,6 +127,7 @@ public class ShoppingItemActivity extends Activity {
             shoppingItem.getQuantity().setValue(quantityField.getText().toString());
         } catch (ArithmeticException e) {
             quantityField.requestFocus();
+            Toast.makeText(getApplicationContext(), R.string.invalid_input_quantity, Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -135,6 +135,7 @@ public class ShoppingItemActivity extends Activity {
         String unit = getUnitFromButtonId(checkedRadioButtonId);
         if (unit == null) {
             Log.w(LOG_TAG, "updateShoppingItem(): Unknown button ID: " + checkedRadioButtonId);
+            Toast.makeText(getApplicationContext(), R.string.invalid_input_unit, Toast.LENGTH_LONG).show();
             return false;
         }
         shoppingItem.getQuantity().setUnit(unit);
@@ -165,6 +166,7 @@ public class ShoppingItemActivity extends Activity {
         buttons.put(R.id.ItemDialog_Unit_m, "m");
         buttons.put(R.id.ItemDialog_Unit_inch, "inch");
         buttons.put(R.id.ItemDialog_Unit_ft, "ft");
+        buttons.put(R.id.ItemDialog_Unit_yd, "yd");
 
         buttons.put(R.id.ItemDialog_Unit_g, "g");
         buttons.put(R.id.ItemDialog_Unit_kg, "kg");

@@ -9,10 +9,13 @@
     <string name="delete_item">Delete</string>
     <string name="shopping_item">Shopping Item</string>
     <string name="item_price_hint">Price, e.g. 19.9</string>
-    <string name="item_quantity_hint">Quantity, e.g. 150*3+100</string>
-    <string name="invalid_input">Invalid input, please check</string>
+    <string name="item_quantity_hint">Quantity, e.g. 550 or 150*3+100</string>
+    <string name="invalid_input_price">The price input is invalid</string>
+    <string name="invalid_input_quantity">The quantity input is invalid</string>
+    <string name="invalid_input_unit">Have you selected an unit type?</string>
     <string name="price">Price:</string>
     <string name="quantity">Quantity:</string>
     <string name="unit">Unit:</string>
     <string name="each_unit">each</string>
+    <string name="add_items_hint">Add at least two items to compare</string>
 </resources>

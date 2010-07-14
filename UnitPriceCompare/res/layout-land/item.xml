@@ -76,6 +76,8 @@
                 android:layout_height="wrap_content" android:layout_weight="1" android:text="inch" />
             <RadioButton android:id="@+id/ItemDialog_Unit_ft" 
                 android:layout_height="wrap_content" android:layout_weight="1" android:text="ft" />
+            <RadioButton android:id="@+id/ItemDialog_Unit_yd" 
+                android:layout_height="wrap_content" android:layout_weight="1" android:text="yd" />
 
     </RadioGroup>
 

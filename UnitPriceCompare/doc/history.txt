@@ -1,3 +1,14 @@
+0.9.1 (9) 2010-6-29
+  - Fix resource not found error on Android 1.5 (API 3)
+
+0.9 (8) 2010-6-27
+  - Add unit: yard
+  - Change radio button image
+  - Set target API version to 8
+  - Show hint if number of items is less than two
+  - Check if the quantity is negative
+  - Show detail message to indicate which field has input error
+
 0.8 (7) 2010-5-3
   - Bug fix: force close when there is an operator at the end of the value expression
   - Bug fix: piece unit isn't set when application restore
